@@ -1,65 +1,106 @@
-import React from 'react'
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth, db } from './firebase'; // Assuming db is your Firestore instance
 
 function SignUp() {
-const[email,setEmail]=useState("")
-const[password,setPassword]=useState("")
-const[role,setRole]=useState("student")
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [isStudent, setIsStudent] = useState(true);
+  const navigate = useNavigate();
 
+  const handleEmail = (e) => {
+    setEmail(e.target.value);
+  };
 
-const handleEmail=(e)=>{
-    setEmail(e.target.value)
-}
+  const handlePassword = (e) => {
+    setPassword(e.target.value);
+  };
 
-const handlePassword = (e) =>{
-    setPassword(e.target.value)}
-
- const handleRole=(e)=>{
-        setRole(e.target.value)
+  const SignUp = async (e) => {
+    e.preventDefault(); // Prevent form submission
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      // Create 'users' collection and store user data
+      await db.collection('users').doc(userCredential.user.uid).set({
+        email: email,
+        role: isStudent ? 'student' : 'tutor',
+      });
+      // Redirect based on user role
+      if (isStudent) {
+        navigate('/student');
+      } else {
+        navigate('/tutor');
+      }
+    } catch (err) {
+      console.log(err);
     }
+  };
 
   return (
     <div>
-       <div className='justify-center p-28'>
-  <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
-      <form className="card-body">
-        <div className="form-control">
-          <label  className="label ">
-          <span className="label-text text-xl">Sign Up</span>
-          </label>
-          <label className="label">
-            <span className="label-text">Email</span>
-          </label>
-          <input type="email" 
-          placeholder="Email" value={email} 
-          onChange={handleEmail}
-          className="input input-bordered" required />
+      <div className='justify-center p-28'>
+        <div className="card shrink-0 w-full max-w-sm shadow-2xl bg-base-100">
+          <form className="card-body" onSubmit={SignUp}>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text text-xl">Sign Up</span>
+              </label>
+              <label className="label">
+                <span className="label-text">Email</span>
+              </label>
+              <input
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={handleEmail}
+                className="input input-bordered"
+                required
+              />
+            </div>
+            <div className="form-control">
+              <label className="label">
+                <span className="label-text">Password</span>
+              </label>
+              <input
+                type="password"
+                placeholder="Password"
+                className="input input-bordered"
+                onChange={handlePassword}
+                required
+                value={password}
+              />
+            </div>
+            <div className="form-control mt-5">
+              <label className="label cursor-pointer">
+                <span className="label-text">Student</span>
+                <input
+                  type="checkbox"
+                  checked={isStudent}
+                  onChange={() => setIsStudent(true)}
+                  className="checkbox"
+                />
+              </label>
+              <label className="label cursor-pointer">
+                <span className="label-text">Tutor</span>
+                <input
+                  type="checkbox"
+                  checked={!isStudent}
+                  onChange={() => setIsStudent(false)}
+                  className="checkbox"
+                />
+              </label>
+            </div>
+            <div className="form-control mt-6">
+              <button type="submit" className="btn btn-accent text-white">
+                Sign Up
+              </button>
+            </div>
+          </form>
         </div>
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Password</span>
-          </label>
-          <input type="password" placeholder="Password"
-           className="input input-bordered"
-           onChange={handlePassword} 
-           required  value={password}/>
-        </div>
-        <div className="form-control mt-5">
-        <select className="select select-bordered w-full max-w-xs" value={role} onChange={handleRole}>
-            <option disabled selected>Which role are you?</option>
-  <          option>Student</option>
-            <option>Tutor</option>
-        </select>
-        </div>
-        <div className="form-control mt-6">
-          <button className="btn btn-accent text-white">Sign Up</button>
-        </div>
-      </form>
+      </div>
     </div>
-    </div>
-    </div>
-  )
+  );
 }
 
-export default SignUp
+export default SignUp;
