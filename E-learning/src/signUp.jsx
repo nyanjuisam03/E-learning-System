@@ -6,7 +6,6 @@ import { auth, db } from './firebase'; // Assuming db is your Firestore instance
 function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [isStudent, setIsStudent] = useState(true);
   const navigate = useNavigate();
 
   const handleEmail = (e) => {
@@ -21,17 +20,8 @@ function SignUp() {
     e.preventDefault(); // Prevent form submission
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      // Create 'users' collection and store user data
-      await db.collection('users').doc(userCredential.user.uid).set({
-        email: email,
-        role: isStudent ? 'student' : 'tutor',
-      });
-      // Redirect based on user role
-      if (isStudent) {
-        navigate('/student');
-      } else {
-        navigate('/tutor');
-      }
+      navigate('/student')
+    
     } catch (err) {
       console.log(err);
     }
@@ -71,26 +61,7 @@ function SignUp() {
                 value={password}
               />
             </div>
-            <div className="form-control mt-5">
-              <label className="label cursor-pointer">
-                <span className="label-text">Student</span>
-                <input
-                  type="checkbox"
-                  checked={isStudent}
-                  onChange={() => setIsStudent(true)}
-                  className="checkbox"
-                />
-              </label>
-              <label className="label cursor-pointer">
-                <span className="label-text">Tutor</span>
-                <input
-                  type="checkbox"
-                  checked={!isStudent}
-                  onChange={() => setIsStudent(false)}
-                  className="checkbox"
-                />
-              </label>
-            </div>
+           
             <div className="form-control mt-6">
               <button type="submit" className="btn btn-accent text-white">
                 Sign Up
