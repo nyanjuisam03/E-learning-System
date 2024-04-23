@@ -27,6 +27,9 @@ function SignUp() {
     }
   };
 
+ 
+
+
   return (
     <div>
       <div className='justify-center p-28'>
@@ -63,7 +66,7 @@ function SignUp() {
             </div>
            
             <div className="form-control mt-6">
-              <button type="submit" className="btn btn-accent text-white">
+              <button type="submit" className="btn btn-accent text-white" >
                 Sign Up
               </button>
             </div>
