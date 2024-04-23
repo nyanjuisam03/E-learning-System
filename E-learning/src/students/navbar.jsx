@@ -25,7 +25,7 @@ function Navbar() {
           </summary>
           <ul className="p-2 bg-base-100 rounded-t-none ">
             <li><a>Profile</a></li>
-            <li><a>Settings</a></li>
+            <li><a><Link to={'/student-settings'}>Settings</Link></a></li>
             <li><a>Logout</a></li>
           </ul>
         </details>

@@ -6,6 +6,8 @@ import Tutorhome from './tutor/tutorhome';
 import StudentHome from './students/studenthome';
 import Layout from './students/layout';
 import CourseMake from './tutor/courseMake';
+import Settings from './students/settings';
+import Course from './students/course';
 
 function App() {
   return (
@@ -18,7 +20,9 @@ function App() {
             <Route path="/tutor" element={<Tutorhome />} />
             <Route path="/student" element={<StudentHome />} />
             <Route path='/tutor-add' element={<CourseMake/>}/>
-          </Routes>
+            <Route path='/student-settings' element={<Settings/>}/>   
+            <Route path='/student-join'  element={<Course/>}/>
+             </Routes>
         </Layout>
       </Router>
     </>
