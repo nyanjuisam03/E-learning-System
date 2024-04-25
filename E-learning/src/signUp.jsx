@@ -19,16 +19,18 @@ function SignUp() {
   const SignUp = async (e) => {
     e.preventDefault(); // Prevent form submission
     try {
+      // Validate password before signing up
+      if (password.length < 6 || !/[A-Z]/.test(password) || !/[!@#$%^&*]/.test(password)) {
+        throw new Error('Password must be at least 6 characters long and contain a capital letter and a special character.');
+      }
+
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      navigate('/student')
-    
+      navigate('/student');
     } catch (err) {
       console.log(err);
+      alert(err.message); // Show error message to the user
     }
   };
-
- 
-
 
   return (
     <div>
@@ -64,7 +66,6 @@ function SignUp() {
                 value={password}
               />
             </div>
-           
             <div className="form-control mt-6">
               <button type="submit" className="btn btn-accent text-white" >
                 Sign Up

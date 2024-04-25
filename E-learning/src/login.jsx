@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { FaGoogle } from 'react-icons/fa';
 import { auth } from './firebase';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,Link } from 'react-router-dom';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -67,6 +67,13 @@ function Login() {
                   Forgot password?
                 </a>
               </label>
+              <Link to={'/signUp'}>
+              <label className="label">
+                <a href="#" className="label-text-alt link link-hover ">
+                 Not sign up yet,Join Now?
+                </a>
+              </label>
+              </Link>
             </div>
             <div className="form-control mt-6">
               <button type="submit" className="btn btn-accent text-white">
