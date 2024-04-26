@@ -75,6 +75,9 @@ function Navbar() {
                       <a>Profile</a>
                     </li>
                     <li>
+                      <a>Course</a>
+                    </li>
+                    <li>
                       <a>
                         <Link to={'/student-settings'}>Settings</Link>
                       </a>
