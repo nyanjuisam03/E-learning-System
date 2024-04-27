@@ -10,6 +10,7 @@ import Settings from './students/settings';
 import Course from './students/course';
 import Homepage from './homepage';
 import CourseDetails from './tutor/courseDetails';
+import Courses from './tutor/courses';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path='/student-settings' element={<Settings/>}/>   
             <Route path='/student-join'  element={<Course/>}/>
             <Route path='/tutor-create' element={<CourseDetails/>}/>
+            <Route path='/tutor-course' element={<Courses/>}/>
              </Routes>
         </Layout>
       </Router>

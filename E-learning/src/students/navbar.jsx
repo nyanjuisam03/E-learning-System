@@ -75,7 +75,7 @@ function Navbar() {
                       <a>Profile</a>
                     </li>
                     <li>
-                      <a>Course</a>
+                <Link to={'/tutor-course'}> <a>Course</a></Link>     
                     </li>
                     <li>
                       <a>
