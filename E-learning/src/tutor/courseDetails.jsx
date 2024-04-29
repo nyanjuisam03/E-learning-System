@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 function CourseDetails() {
   const [courseData, setCourseData] = useState({
     name: '',
+    tutor:'',
+    category:'',
     description: '',
     duration: ''
   });
@@ -64,6 +66,30 @@ const navigate=useNavigate()
             placeholder="Name your course"
             name="name"
             value={courseData.name}
+            onChange={handleChange}
+            className="input input-bordered w-full max-w-xs"
+            required
+          />
+        </label>
+        <label className='flex flex-col'>
+          Tutor Name:
+          <input
+            type="text"
+            placeholder="Your Name"
+            name="tutor"
+            value={courseData.tutor}
+            onChange={handleChange}
+            className="input input-bordered w-full max-w-xs"
+            required
+          />
+        </label>
+        <label className='flex flex-col'>
+          Category:
+          <input
+            type="text"
+            placeholder="Name your category"
+            name="category"
+            value={courseData.category}
             onChange={handleChange}
             className="input input-bordered w-full max-w-xs"
             required
