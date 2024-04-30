@@ -29,7 +29,7 @@ function Studenthome() {
     <div className='mx-12'>
     <h2>Welcome {userEmail}</h2> 
     <h3>Available Courses:</h3>
-     
+     <h2>Recent Course Additions: </h2>
         {courses.map((course) => (
           <div key={course.id} className="card w-72 bg-base-100 shadow-xl my-4 p-6 flex">
           <h2 className="card-title">{course.name}</h2>
