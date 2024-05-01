@@ -38,9 +38,6 @@ const Courses = () => {
             <div key={course.id} className="card w-96 bg-base-100 shadow-xl my-4 p-6">
           <h2 className="card-title">{course.name}</h2>
           <p> {course.description}</p>
-          <div className="card-actions justify-end">
-          <button className="btn btn-primary "><Link to={`/tutor/${course.id}`}>Join Now  </Link></button>
-    </div>
           </div>
            
           </li>
