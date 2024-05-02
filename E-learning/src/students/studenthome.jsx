@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
+import { Link } from 'react-router-dom';
 import { db,auth } from '../firebase';
 import { PiCookingPot } from "react-icons/pi";
 import { HiOutlinePaintBrush } from "react-icons/hi2";
@@ -40,14 +41,17 @@ function Studenthome() {
     rewind: true,
     gap   : '18px',
     perPage: 3,
+    arrows:false
   } } >
   <SplideSlide className='h-40'>
+  <Link to={"/cooking"}>
     <div className="card w-44 h-32 bg-green-500 shadow-xl my-2  text-white" >
       <div className='mx-12 my-9'>
       <PiCookingPot className='mx-5 text-2xl'/>
       <h2>Cooking</h2>
       </div>
     </div>
+    </Link>
   </SplideSlide>
   <SplideSlide>
     <div className="card w-44 h-32 bg-green-500 shadow-xl my-2  text-white">

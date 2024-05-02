@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
+import { Link } from 'react-router-dom';
 import { PiCookingPot } from "react-icons/pi";
 import { HiOutlinePaintBrush } from "react-icons/hi2";
 import { FaPhotoVideo } from "react-icons/fa";
@@ -26,19 +27,21 @@ function Course() {
   }, []);
   return (
     <div>
-    <h2>Which course do you want to join </h2>
+    <h2>Which skillwould you like to learn </h2>
     <Splide  options={ {
     rewind: true,
     gap   : '18px',
     perPage: 3,
   } } >
   <SplideSlide className='h-40'>
+    <Link to={'/cooking'}>
     <div className="card w-44 h-32 bg-green-500 shadow-xl my-2  text-white" >
       <div className='mx-12 my-9'>
       <PiCookingPot className='mx-5 text-2xl'/>
       <h2>Cooking</h2>
       </div>
     </div>
+    </Link>
   </SplideSlide>
   <SplideSlide>
     <div className="card w-44 h-32 bg-green-500 shadow-xl my-2  text-white">
@@ -68,18 +71,6 @@ function Course() {
   
 </Splide>
 
-    <ul>
-        {courses.map((course) => (
-          <div key={course.id} className="card w-80 bg-base-100 shadow-xl my-4 p-6">
-          <h2 className="card-title">{course.name}</h2>
-          <p> {course.description}</p>
-        
-      <button className="btn btn-outline btn-success my-4">Join Now</button>
-
-  
-          </div>
-        ))}
-      </ul>
     </div>
   )
 }
