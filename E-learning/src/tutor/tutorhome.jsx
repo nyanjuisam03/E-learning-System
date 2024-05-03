@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { FaBook } from "react-icons/fa";
+import { PiStudentLight } from "react-icons/pi";
+import { AiOutlineHome } from "react-icons/ai"; 
 import { useParams } from 'react-router-dom';
 import { collection, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
@@ -31,9 +34,43 @@ function Tutorhome() {
   };
 
   return (
-    <div>
-      <h2>Welcome Back Tutor</h2>
-      <div className="card w-96 bg-base-100 shadow-xl mx-6 p-12 flex">
+    <div className='flex'>
+<div className='h-100%'>
+<div className="flex flex-col h-full p-3 w-60 dark:bg-gray-200 dark:text-gray-800  bg-red-300">
+	<div className="space-y-3">
+		<div className="flex items-center justify-between">
+			<h2>Dashboard</h2>
+		</div>
+
+		<div className="flex-1">
+			<ul className="pt-2 pb-4 space-y-1 text-sm">
+				<li className="rounded-sm">
+					<a rel="noopener noreferrer" href="#" className="flex items-center p-2 space-x-3 rounded-md">
+          <AiOutlineHome className='text-xl' />
+						<span>Home</span>
+					</a>
+				</li>
+				<li className="rounded-sm">
+					<a rel="noopener noreferrer" href="#" className="flex items-center p-2 space-x-3 rounded-md">
+          <FaBook className='text-xl'/>
+          <span>Courses</span>
+					</a>
+				</li>
+				<li className="rounded-sm">
+					<a rel="noopener noreferrer" href="#" className="flex items-center p-2 space-x-3 rounded-md">
+          <PiStudentLight className='text-xl' />
+						<span>Students</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+	</div>
+
+</div>
+</div>
+
+
+      <div className="card w-96 bg-base-100 shadow-xl mx-6 p-12 flex h-40">
         <h2>Course Name: {courseName}</h2>
        </div>
     </div>
