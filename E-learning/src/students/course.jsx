@@ -27,7 +27,7 @@ function Course() {
   }, []);
   return (
     <div>
-    <h2>Which skillwould you like to learn </h2>
+    <h2>Which skill would you like to learn </h2>
     <Splide  options={ {
     rewind: true,
     gap   : '18px',
