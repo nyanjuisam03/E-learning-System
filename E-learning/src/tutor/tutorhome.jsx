@@ -5,6 +5,7 @@ import { AiOutlineHome } from "react-icons/ai";
 import { useParams } from 'react-router-dom';
 import { collection, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db } from '../firebase';
+import ContentButton from './contentbutton/contentButton';
 
 function Tutorhome() {
   const { courseId } = useParams(); // Get the courseId parameter from the URL
@@ -52,6 +53,28 @@ function Tutorhome() {
     }
   };
 
+
+  const handleAddContent = async (topicName, contentType, contentValue) => {
+    try {
+      const updatedTopics = topics.map(topic => {
+        if (topic.name === topicName) {
+          return {
+            name: topic.name,
+            content: [
+              ...topic.content,
+              { type: contentType, value: contentValue },
+            ],
+          };
+        }
+        return topic;
+      });
+      await updateDoc(doc(db, 'courses', courseId), { topics: updatedTopics });
+      setTopics(updatedTopics);
+    } catch (error) {
+      console.error('Error adding content:', error);
+    }
+  };
+
   return (
     <div className='flex'>
       <div className='h-100%'>
@@ -93,16 +116,54 @@ function Tutorhome() {
         <div>
           <button className='bg-sky-500/75 p-2' onClick={handleAddTopic}>Add Topic</button>
           <ul>
-            {topics.map((topic, index) => (
-              <details key={index} className="collapse bg-base-200 my-2">
-                <summary className="collapse-title text-xl font-medium">{topic}</summary>
-                <div className="collapse-content"> 
-                  <p>content</p>
-                  <button onClick={() => handleDeleteTopic(topic)} className="p-2 bg-red-700/70">Delete</button>
-                </div>
-              </details>
-            ))}
-          </ul>
+  {topics.map((topic, index) => (
+    <details key={index} className="collapse bg-base-200 my-2">
+      <summary className="collapse-title text-xl font-medium">{topic}</summary>
+      <div className="collapse-content flex flex-col">
+        <div className="flex">
+          <div>
+            <button className="btn bg-yellow-500" onClick={() => document.getElementById(`video_modal_${index}`).showModal()}>Video</button>
+            <dialog id={`video_modal_${index}`} className="modal">
+              <div className="modal-box">
+                <form method="dialog">
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                </form>
+                <h3 className="font-bold text-lg">Video Modal for Topic {index}</h3>
+                <p className="py-4">Press ESC key or click on ✕ button to close</p>
+              </div>
+            </dialog>
+          </div>
+          <div>
+            <button className="btn bg-yellow-500 mx-3" onClick={() => document.getElementById(`file_modal_${index}`).showModal()}>File</button>
+            <dialog id={`file_modal_${index}`} className="modal">
+              <div className="modal-box">
+                <form method="dialog">
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                </form>
+                <h3 className="font-bold text-lg">File Modal for Topic {index}</h3>
+                <p className="py-4">Press ESC key or click on ✕ button to close</p>
+              </div>
+            </dialog>
+          </div>
+          <div>
+            <button className="btn bg-yellow-500" onClick={() => document.getElementById(`text_modal_${index}`).showModal()}>Text</button>
+            <dialog id={`text_modal_${index}`} className="modal">
+              <div className="modal-box">
+                <form method="dialog">
+                  <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                </form>
+                <h3 className="font-bold text-lg">Text Modal for Topic {index}</h3>
+                <textarea className="textarea textarea-bordered" placeholder="Bio"></textarea>
+              </div>
+            </dialog>
+          </div>
+        </div>
+        <button onClick={() => handleDeleteTopic(topic)} className="p-2 bg-red-700/70 my-2">Delete</button>
+      </div>
+    </details>
+  ))}
+</ul>
+
         </div>
       </div>
     </div>
