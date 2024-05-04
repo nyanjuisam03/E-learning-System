@@ -66,27 +66,29 @@ function Navbar() {
                 </ul>
               </div>
               <li className="mx-3">
-                <details>
-                  <summary>
-                    <RxAvatar className="text-2xl" />
-                  </summary>
-                  <ul className="p-2 bg-base-100 rounded-t-none">
-                    <li>
-                      <a>Profile</a>
-                    </li>
-                    <li>
-                <Link to={'/tutor-course'}> <a>Course</a></Link>     
-                    </li>
-                    <li>
-                      <a>
-                        <Link to={'/student-settings'}>Settings</Link>
-                      </a>
-                    </li>
-                    <li onClick={handleLogout}>
-                      <a>Logout</a>
-                    </li>
-                  </ul>
-                </details>
+              <details className="dropdown">
+  <summary className="m-1 btn">
+    <RxAvatar className="text-2xl" />
+  </summary>
+  <ul className="p-3 bg-base-100 rounded-t-none z-[1]">
+    <li>
+      <a>Profile</a>
+    </li>
+    <li>
+      <Link to={'/tutor-course'}>
+        <a>Course</a>
+      </Link>
+    </li>
+    <li>
+      <a>
+        <Link to={'/student-settings'}>Settings</Link>
+      </a>
+    </li>
+    <li onClick={handleLogout}>
+      <a>Logout</a>
+    </li>
+  </ul>
+</details>
               </li>
             </ul>
           </div>
