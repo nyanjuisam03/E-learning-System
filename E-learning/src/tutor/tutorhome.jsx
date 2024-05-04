@@ -128,7 +128,7 @@ function Tutorhome() {
                 <form method="dialog">
                   <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                 </form>
-                <h3 className="font-bold text-lg">Video Modal for Topic {index}</h3>
+                <h3 className="font-bold text-lg">Video Modal for Topic </h3>
                 <p className="py-4">Press ESC key or click on ✕ button to close</p>
               </div>
             </dialog>
@@ -140,8 +140,8 @@ function Tutorhome() {
                 <form method="dialog">
                   <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                 </form>
-                <h3 className="font-bold text-lg">File Modal for Topic {index}</h3>
-                <p className="py-4">Press ESC key or click on ✕ button to close</p>
+                <h3 className="font-bold text-lg">File Modal for Topic </h3>
+               in
               </div>
             </dialog>
           </div>
@@ -152,7 +152,7 @@ function Tutorhome() {
                 <form method="dialog">
                   <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                 </form>
-                <h3 className="font-bold text-lg">Text Modal for Topic {index}</h3>
+                <h3 className="font-bold text-lg">Text Modal for Topic </h3>
                 <textarea className="textarea textarea-bordered" placeholder="Bio"></textarea>
               </div>
             </dialog>

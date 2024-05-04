@@ -81,8 +81,9 @@ function Studenthome() {
   
 </Splide>
      <h2>Recent Course Additions: </h2>
+     <div className='flex'>
         {courses.map((course) => (
-          <div key={course.id} className="card w-72 bg-base-100 shadow-xl my-4 p-6 flex">
+          <div key={course.id} className="card w-72 bg-base-100 shadow-xl my-4 p-6 flex mx-3">
           <h2 className="card-title">{course.name}</h2>
           <p className='text-sm'> {course.description}</p>
           <div className='justify-end'>
@@ -90,7 +91,7 @@ function Studenthome() {
           </div>
           </div>
         ))}
-   
+   </div>
      
     </div>
   )
