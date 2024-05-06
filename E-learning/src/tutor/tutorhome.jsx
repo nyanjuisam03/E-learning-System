@@ -3,9 +3,9 @@ import { FaBook } from "react-icons/fa";
 import { PiStudentLight } from "react-icons/pi";
 import { AiOutlineHome } from "react-icons/ai"; 
 import { useParams } from 'react-router-dom';
-import { collection, doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
-import { db } from '../firebase';
-import ContentButton from './contentbutton/contentButton';
+import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
+import { db,storage } from '../firebase';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 function Tutorhome() {
   const { courseId } = useParams(); // Get the courseId parameter from the URL
@@ -30,6 +30,8 @@ function Tutorhome() {
     fetchCourseName();
   }, [courseId]);
 
+  console.log('Topics:', topics);
+
   const handleAddTopic = async () => {
     try {
       const topicName = `Topic ${topics.length + 1}`;
@@ -53,7 +55,27 @@ function Tutorhome() {
     }
   };
 
-
+  const uploadFile = async (file) => {
+    try {
+      const storageRef = storage.ref(`files/${file.name}`);
+      await storageRef.put(file);
+      const fileURL = await storageRef.getDownloadURL();
+      return fileURL;
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      return null;
+    }
+  };
+  
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    const fileURL = await uploadFile(file);
+    if (fileURL) {
+      // Handle storing the file URL in the database
+      console.log('File URL:', fileURL);
+    }
+  };
+  
   
 
   return (
@@ -97,12 +119,13 @@ function Tutorhome() {
         <div>
           <button className='bg-sky-500/75 p-2' onClick={handleAddTopic}>Add Topic</button>
           <ul>
-  {topics.map((topic, index) => (
+          {topics.map((topic, index) => (
     <details key={index} className="collapse bg-base-200 my-2">
       <summary className="collapse-title text-xl font-medium">{topic}</summary>
       <div className="collapse-content flex flex-col">
         <div>
-          <input type="file" name="" id="" />
+        <input type="file" name="" id="" onChange={handleFileUpload} />
+          <button className='p-2 bg-green-600'>Submit</button>
         </div>
         <button onClick={() => handleDeleteTopic(topic)} className="p-2 bg-red-700/70 my-2">Delete</button>
       </div>
