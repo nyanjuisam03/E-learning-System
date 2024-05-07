@@ -12,15 +12,19 @@ function Tutorhome() {
   const [courseName, setCourseName] = useState('');
   const [topics, setTopics] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
-  const [isTopicsView, setIsTopicsView] = useState(true);
+  const [file, setFile] = useState(null);
+  const [itemName, setItemName] = useState('');
+  const [files, setFiles] = useState({});
 
   useEffect(() => {
-    const fetchCourseName = async () => {
+    const fetchCourseData = async () => {
       try {
         const courseDoc = await getDoc(doc(db, 'courses', courseId)); // Fetch the course document
         if (courseDoc.exists()) {
           setCourseName(courseDoc.data().name); // Set the courseName state to the name of the course
           setTopics(courseDoc.data().topics || []); // Set the topics state to the topics array in the course document
+          setQuizzes(courseDoc.data().quizzes || []); // Set the quizzes state to the quizzes array in the course document
+          setFiles(courseDoc.data().files || {}); // Set the files state to the files object in the course document
         } else {
           console.error('Course not found');
         }
@@ -29,10 +33,8 @@ function Tutorhome() {
       }
     };
 
-    fetchCourseName();
+    fetchCourseData();
   }, [courseId]);
-
-  console.log('Topics:', topics);
 
   const handleAddTopic = async () => {
     try {
@@ -58,18 +60,41 @@ function Tutorhome() {
     }
   };
 
+  const handleFileUpload = async (itemName) => {
+    if (!file || !itemName) {
+      console.error('File or item name not provided');
+      return;
+    }
+
+    try {
+      const fileRef = ref(storage, `${courseId}/${itemName}/${file.name}`);
+      await uploadBytes(fileRef, file);
+      const fileUrl = await getDownloadURL(fileRef);
+      console.log('File uploaded successfully:', fileUrl);
+      // Add the file URL to Firestore
+      await updateDoc(doc(db, 'courses', courseId), {
+        files: { ...files, [itemName]: [...(files[itemName] || []), { name: file.name, fileURL: fileUrl }] },
+      });
+      setFiles({ ...files, [itemName]: [...(files[itemName] || []), { name: file.name, fileURL: fileUrl }] });
+      setFile(null);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    }
+  };
+
   const handleDeleteTopic = async (topicName) => {
     try {
       await updateDoc(doc(db, 'courses', courseId), {
         topics: arrayRemove(topicName), // Remove the topic from the topics array in the course document
+        files: { ...files, [topicName]: [] }, // Remove files associated with the deleted topic
       });
       setTopics(topics.filter(topic => topic !== topicName)); // Update the topics state to remove the deleted topic
+      setFiles({ ...files, [topicName]: [] }); // Update the files state to remove files associated with the deleted topic
     } catch (error) {
       console.error('Error deleting topic:', error);
     }
   };
 
-  
   const handleDeleteQuiz = async (quizName) => {
     try {
       await updateDoc(doc(db, 'courses', courseId), {
@@ -80,10 +105,8 @@ function Tutorhome() {
       console.error('Error deleting quiz:', error);
     }
   };
+
   
-  const handleToggleView = () => {
-    setIsTopicsView(prev => !prev);
-  };
 
   return (
     <div className='flex'>
@@ -128,29 +151,34 @@ function Tutorhome() {
           <button className='bg-sky-500/75 p-2 mx-4' onClick={handleAddQuiz}>Add Quiz</button>
           <ul>
           {topics.map((topic, index) => (
-    <details key={index} className="collapse bg-base-200 my-2">
-      <summary className="collapse-title text-xl font-medium">{topic}</summary>
-      <div className="collapse-content flex flex-col">
-        <div>
-        <input type="file" name="" id=""  />
-          <button className='p-2 bg-green-600'>Submit</button>
-        </div>
-        <button onClick={() => handleDeleteTopic(topic)} className="p-2 bg-red-700/70 my-2">Delete</button>
-      </div>
-    </details>
-  ))}
+              <details key={index} className="collapse bg-base-200 my-2">
+                <summary className="collapse-title text-xl font-medium">{topic}</summary>
+                <div className="collapse-content flex flex-col">
+                  <div>
+                    <input type="file" name="file" id="file" onChange={(e) => setFile(e.target.files[0])} />
+                    <button className='p-2 bg-green-600' onClick={() => handleFileUpload(topic)}>Submit</button>
+                  </div>
+                  {files[topic] && files[topic].map((file, fileIndex) => (
+                    <div key={fileIndex}>
+                      <a href={file.fileURL} target="_blank" rel="noreferrer">{file.name}</a>
+                    </div>
+                  ))}
+      <button onClick={() => handleDeleteTopic(topic)} className="p-2 bg-red-700/70 my-2">Delete</button>
+    </div>
+  </details>
+))}
+
 </ul>
 
-<ul>
-            {quizzes.map((quiz, index) => (
-              <details key={index} className="collapse bg-base-200 my-2">
-                <summary className="collapse-title text-xl font-medium">{quiz}</summary>
-                <div className="collapse-content flex flex-col">
-                  {/* Quiz content */}
-                  <button onClick={() => handleDeleteQuiz(quiz)} className="p-2 bg-red-700/70 my-2">Delete</button>
-                </div>
-              </details>
-            ))}
+<ul>{quizzes.map((quiz, index) => (
+            <details key={index} className="collapse bg-base-200 my-2">
+              <summary className="collapse-title text-xl font-medium">{quiz}</summary>
+              <div className="collapse-content flex flex-col">
+                {/* Quiz content */}
+                <button onClick={() => handleDeleteQuiz(quiz)} className="p-2 bg-red-700/70 my-2">Delete</button>
+              </div>
+            </details>
+          ))}
           </ul>
 
         </div>
