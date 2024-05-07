@@ -11,6 +11,8 @@ function Tutorhome() {
   const { courseId } = useParams(); // Get the courseId parameter from the URL
   const [courseName, setCourseName] = useState('');
   const [topics, setTopics] = useState([]);
+  const [quizzes, setQuizzes] = useState([]);
+  const [isTopicsView, setIsTopicsView] = useState(true);
 
   useEffect(() => {
     const fetchCourseName = async () => {
@@ -44,6 +46,18 @@ function Tutorhome() {
     }
   };
 
+  const handleAddQuiz = async () => {
+    try {
+      const quizName = `Quiz ${quizzes.length + 1}`;
+      await updateDoc(doc(db, 'courses', courseId), {
+        quizzes: arrayUnion(quizName),
+      });
+      setQuizzes([...quizzes, quizName]);
+    } catch (error) {
+      console.error('Error adding quiz:', error);
+    }
+  };
+
   const handleDeleteTopic = async (topicName) => {
     try {
       await updateDoc(doc(db, 'courses', courseId), {
@@ -55,28 +69,21 @@ function Tutorhome() {
     }
   };
 
-  const uploadFile = async (file) => {
+  
+  const handleDeleteQuiz = async (quizName) => {
     try {
-      const storageRef = storage.ref(`files/${file.name}`);
-      await storageRef.put(file);
-      const fileURL = await storageRef.getDownloadURL();
-      return fileURL;
+      await updateDoc(doc(db, 'courses', courseId), {
+        quizzes: arrayRemove(quizName),
+      });
+      setQuizzes(quizzes.filter(quiz => quiz !== quizName));
     } catch (error) {
-      console.error('Error uploading file:', error);
-      return null;
+      console.error('Error deleting quiz:', error);
     }
   };
   
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    const fileURL = await uploadFile(file);
-    if (fileURL) {
-      // Handle storing the file URL in the database
-      console.log('File URL:', fileURL);
-    }
+  const handleToggleView = () => {
+    setIsTopicsView(prev => !prev);
   };
-  
-  
 
   return (
     <div className='flex'>
@@ -118,13 +125,14 @@ function Tutorhome() {
         <h2>Course Name: {courseName}</h2>
         <div>
           <button className='bg-sky-500/75 p-2' onClick={handleAddTopic}>Add Topic</button>
+          <button className='bg-sky-500/75 p-2 mx-4' onClick={handleAddQuiz}>Add Quiz</button>
           <ul>
           {topics.map((topic, index) => (
     <details key={index} className="collapse bg-base-200 my-2">
       <summary className="collapse-title text-xl font-medium">{topic}</summary>
       <div className="collapse-content flex flex-col">
         <div>
-        <input type="file" name="" id="" onChange={handleFileUpload} />
+        <input type="file" name="" id=""  />
           <button className='p-2 bg-green-600'>Submit</button>
         </div>
         <button onClick={() => handleDeleteTopic(topic)} className="p-2 bg-red-700/70 my-2">Delete</button>
@@ -132,6 +140,18 @@ function Tutorhome() {
     </details>
   ))}
 </ul>
+
+<ul>
+            {quizzes.map((quiz, index) => (
+              <details key={index} className="collapse bg-base-200 my-2">
+                <summary className="collapse-title text-xl font-medium">{quiz}</summary>
+                <div className="collapse-content flex flex-col">
+                  {/* Quiz content */}
+                  <button onClick={() => handleDeleteQuiz(quiz)} className="p-2 bg-red-700/70 my-2">Delete</button>
+                </div>
+              </details>
+            ))}
+          </ul>
 
         </div>
       </div>
