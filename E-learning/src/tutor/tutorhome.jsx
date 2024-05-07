@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaBook } from "react-icons/fa";
 import { PiStudentLight } from "react-icons/pi";
 import { AiOutlineHome } from "react-icons/ai"; 
-import { useParams } from 'react-router-dom';
+import { useParams,Link } from 'react-router-dom';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db,storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -120,10 +120,12 @@ function Tutorhome() {
             <div className="flex-1">
               <ul className="pt-2 pb-4 space-y-1 text-sm">
                 <li className="rounded-sm">
+                  <Link to={'/tutor-course'}>
                   <a rel="noopener noreferrer" href="#" className="flex items-center p-2 space-x-3 rounded-md">
                     <AiOutlineHome className='text-xl' />
                     <span>Home</span>
                   </a>
+                  </Link>
                 </li>
                 <li className="rounded-sm">
                   <a rel="noopener noreferrer" href="#" className="flex items-center p-2 space-x-3 rounded-md">
