@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FaBook } from "react-icons/fa";
 import { PiStudentLight } from "react-icons/pi";
 import { AiOutlineHome } from "react-icons/ai"; 
+import { PiExam } from "react-icons/pi";
 import { useParams,Link } from 'react-router-dom';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db,storage } from '../firebase';
@@ -152,6 +153,12 @@ function Tutorhome() {
                     <span>Students</span>
                   </a>
                 </li>
+                <li className="rounded-sm">
+                  <a rel="noopener noreferrer" href="#" className="flex items-center p-2 space-x-3 rounded-md">
+                    <PiExam  className='text-xl' />
+                    <span>Quizzes</span>
+                  </a>
+                </li>
               </ul>
             </div>
           </div>
@@ -196,6 +203,7 @@ function Tutorhome() {
               <summary className="collapse-title text-xl font-medium">{quiz}</summary>
               <div className="collapse-content flex flex-col">
                 {/* Quiz content */}
+                <Link to={`/quiz/${quiz.id}`}>Create A quiz</Link>
                 <button onClick={() => handleDeleteQuiz(quiz)} className="p-2 bg-red-700/70 my-2">Delete</button>
               </div>
             </details>

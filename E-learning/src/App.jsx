@@ -12,6 +12,8 @@ import Homepage from './homepage';
 import CourseDetails from './tutor/courseDetails';
 import Courses from './tutor/courses';
 import Cooking from './students/skills/cooking';
+import CreateQuiz from './tutor/createQuiz';
+
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
             <Route path='/tutor-create' element={<CourseDetails/>}/>
             <Route path='/tutor-course' element={<Courses/>}/>
             <Route path='/cooking' element={<Cooking />} />
+            <Route path='/quiz/:quizId'  element={<CreateQuiz/>}/>
              </Routes>
         </Layout>
       </Router>
