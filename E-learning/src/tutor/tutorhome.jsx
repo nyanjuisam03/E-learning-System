@@ -36,13 +36,17 @@ function Tutorhome() {
     fetchCourseData();
   }, [courseId]);
 
-  const handleAddTopic = async () => {
+  const handleAddTopic = async (topicName) => {
+    if (!topicName.trim()) {
+      console.error('Topic name cannot be empty');
+      return;
+    }
+
     try {
-      const topicName = `Topic ${topics.length + 1}`;
       await updateDoc(doc(db, 'courses', courseId), {
-        topics: arrayUnion(topicName), // Add the new topic to the topics array in the course document
+        topics: arrayUnion(topicName),
       });
-      setTopics([...topics, topicName]); // Update the topics state with the new topic
+      setTopics([...topics, topicName]);
     } catch (error) {
       console.error('Error adding topic:', error);
     }
@@ -60,23 +64,32 @@ function Tutorhome() {
     }
   };
 
-  const handleFileUpload = async (itemName) => {
+  const handleFileUpload = async (topicName) => {
     if (!file || !itemName) {
       console.error('File or item name not provided');
       return;
     }
 
     try {
-      const fileRef = ref(storage, `${courseId}/${itemName}/${file.name}`);
+      const fileRef = ref(storage, `${courseId}/${topicName}/${file.name}`);
       await uploadBytes(fileRef, file);
       const fileUrl = await getDownloadURL(fileRef);
       console.log('File uploaded successfully:', fileUrl);
-      // Add the file URL to Firestore
+
+      // Update Firestore with the file URL
       await updateDoc(doc(db, 'courses', courseId), {
-        files: { ...files, [itemName]: [...(files[itemName] || []), { name: file.name, fileURL: fileUrl }] },
+        files: {
+          ...files,
+          [topicName]: [...(files[topicName] || []), { name: file.name, fileURL: fileUrl }],
+        },
       });
-      setFiles({ ...files, [itemName]: [...(files[itemName] || []), { name: file.name, fileURL: fileUrl }] });
+
+      setFiles({
+        ...files,
+        [topicName]: [...(files[topicName] || []), { name: file.name, fileURL: fileUrl }],
+      });
       setFile(null);
+      setItemName('');
     } catch (error) {
       console.error('Error uploading file:', error);
     }
@@ -149,7 +162,13 @@ function Tutorhome() {
       <div className="card  bg-base-100 shadow-xl mx-6 p-12 flex flex-col ">
         <h2>Course Name: {courseName}</h2>
         <div>
-          <button className='bg-sky-500/75 p-2' onClick={handleAddTopic}>Add Topic</button>
+        <input
+            type="text"
+            placeholder="Enter topic name"
+            value={itemName}
+            onChange={(e) => setItemName(e.target.value)}
+          />
+          <button className='bg-sky-500/75 p-2' onClick={() => handleAddTopic(itemName)}>Add Topic</button>
           <button className='bg-sky-500/75 p-2 mx-4' onClick={handleAddQuiz}>Add Quiz</button>
           <ul>
           {topics.map((topic, index) => (
