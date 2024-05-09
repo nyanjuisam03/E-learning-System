@@ -7,7 +7,7 @@ import { useParams,Link } from 'react-router-dom';
 import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
 import { db,storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-
+import { v4 as uuidv4 } from 'uuid';
 
 function Tutorhome() {
   const { courseId } = useParams(); // Get the courseId parameter from the URL
@@ -56,15 +56,16 @@ function Tutorhome() {
 
   const handleAddQuiz = async () => {
     try {
-      const quizName = `Quiz ${quizzes.length + 1}`;
-      await updateDoc(doc(db, 'courses', courseId), {
-        quizzes: arrayUnion(quizName),
-      });
-      setQuizzes([...quizzes, quizName]);
+        const quizId = uuidv4(); // Generate a unique ID for the quiz
+        const quizName = `Quiz ${quizzes.length + 1}`;
+        await updateDoc(doc(db, 'courses', courseId), {
+            quizzes: [...quizzes, { id: quizId, name: quizName }],
+        });
+        setQuizzes([...quizzes, { id: quizId, name: quizName }]);
     } catch (error) {
-      console.error('Error adding quiz:', error);
+        console.error('Error adding quiz:', error);
     }
-  };
+};
 
   const handleFileUpload = async (topicName) => {
     if (!file || !itemName) {
@@ -202,14 +203,13 @@ function Tutorhome() {
 <ul>
 {quizzes.map((quiz, index) => (
   <details key={index} className="collapse bg-base-200 my-2">
-    <summary className="collapse-title text-xl font-medium">{quiz}</summary>
+    <summary className="collapse-title text-xl font-medium">{quiz.name}</summary>
     <div className="collapse-content flex flex-col">
       {/* Quiz content */}
-      <Link to={`/quiz/${quiz.id}`}>Create A quiz</Link>
+      <Link to={`/quiz/${quiz.id}`}>Create questions</Link>
       <Link onClick={() => handleViewQuestions(quiz)}>View the questions</Link>
       <button onClick={() => handleDeleteQuiz(quiz)} className="p-2 bg-red-700/70 my-2">Delete</button>
       {/* Display questions if quiz.questions is not undefined */}
-      
     </div>
   </details>
 ))}

@@ -10,7 +10,6 @@ const CreateQuiz = () => {
     const [choices, setChoices] = useState(['', '', '', '']);
     const [correctAnswer, setCorrectAnswer] = useState(1);
     const [timerCategory, setTimerCategory] = useState('');
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         const questionData = {
@@ -19,18 +18,29 @@ const CreateQuiz = () => {
             correctAnswer,
             timerCategory,
         };
-
+    
         try {
-            const questionId = uuidv4(); // Generate a unique ID for the question
-            await addDoc(collection(db, 'questions'), { id: questionId, ...questionData });
-
-            // Update the quiz document to add the question ID
-            const quizRef = doc(db, 'courses', courseId, 'quizzes', quizId);
-            await updateDoc(quizRef, {
-                questions: [...(quizRef.questions || []), questionId], // Add question ID to questions array
-            });
-
-            console.log('Question added with ID: ', questionId);
+            // Add the question to the 'questions' collection
+            const questionDocRef = await addDoc(collection(db, 'questions'), questionData);
+            const questionId = questionDocRef.id;
+    
+            // Update the 'quizzes' array in the course document to link the question ID to the current quiz
+            const courseDocRef = doc(db, 'courses', courseId);
+            const courseDoc = await getDoc(courseDocRef);
+            if (courseDoc.exists()) {
+                const quizIndex = courseDoc.data().quizzes.findIndex(quiz => quiz.id === quizId);
+                if (quizIndex !== -1) {
+                    const updatedQuizzes = [...courseDoc.data().quizzes];
+                    updatedQuizzes[quizIndex].questions.push(questionId);
+                    await updateDoc(courseDocRef, { quizzes: updatedQuizzes });
+                } else {
+                    console.error('Quiz not found in course document');
+                }
+            } else {
+                console.error('Course document not found');
+            }
+    
+            // Reset form fields after successful submission
             setQuestion('');
             setChoices(['', '', '', '']);
             setCorrectAnswer(1);
@@ -39,7 +49,6 @@ const CreateQuiz = () => {
             console.error('Error adding question:', error);
         }
     };
-
     return (
         <div className='flex flex-col'>
             <h2>Add Question</h2>
