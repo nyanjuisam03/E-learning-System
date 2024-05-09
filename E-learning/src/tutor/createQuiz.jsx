@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { addDoc, collection ,doc} from 'firebase/firestore';
+import { addDoc, collection, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
+import { v4 as uuidv4 } from 'uuid';
 
 const CreateQuiz = () => {
     const { courseId, quizId } = useParams();
     const [question, setQuestion] = useState('');
     const [choices, setChoices] = useState(['', '', '', '']);
-    const [correctAnswer, setCorrectAnswer] = useState(1); // Start at 1
+    const [correctAnswer, setCorrectAnswer] = useState(1);
     const [timerCategory, setTimerCategory] = useState('');
 
     const handleSubmit = async (e) => {
@@ -18,69 +19,59 @@ const CreateQuiz = () => {
             correctAnswer,
             timerCategory,
         };
-    
+
         try {
-            const courseRef = doc(db, 'courses', courseId);
-            const courseSnapshot = await getDoc(courseRef);
-            if (courseSnapshot.exists()) {
-                const courseData = courseSnapshot.data();
-                const quizzes = courseData.quizzes || [];
-                const updatedQuizzes = quizzes.map((quiz) => {
-                    if (quiz.name === quizName) { // Assuming each quiz has a unique name
-                        return { ...quiz, questions: [...(quiz.questions || []), questionData] };
-                    }
-                    return quiz;
-                });
-                await updateDoc(courseRef, { quizzes: updatedQuizzes });
-                console.log('Question added to quizzes array');
-            } else {
-                console.error('Course document not found');
-            }
-            // Reset form fields after successful submission
+            const questionId = uuidv4(); // Generate a unique ID for the question
+            await addDoc(collection(db, 'questions'), { id: questionId, ...questionData });
+
+            // Update the quiz document to add the question ID
+            const quizRef = doc(db, 'courses', courseId, 'quizzes', quizId);
+            await updateDoc(quizRef, {
+                questions: [...(quizRef.questions || []), questionId], // Add question ID to questions array
+            });
+
+            console.log('Question added with ID: ', questionId);
             setQuestion('');
             setChoices(['', '', '', '']);
-            setCorrectAnswer(1); // Reset to 1
+            setCorrectAnswer(1);
             setTimerCategory('');
         } catch (error) {
             console.error('Error adding question:', error);
         }
     };
-    
 
     return (
         <div className='flex flex-col'>
             <h2>Add Question</h2>
             <form onSubmit={handleSubmit}>
                 <div>
-                <label>
-                    Question:
-                    <input type="text" value={question} onChange={(e) => setQuestion(e.target.value)} required />
-                </label>
+                    <label>
+                        Question:
+                        <input type="text" value={question} onChange={(e) => setQuestion(e.target.value)} required />
+                    </label>
                 </div>
                 {choices.map((choice, index) => (
-                    <>
-                    <div className='flex'>
-                    <label key={index}>
-                        Choice {index + 1}: {/* Display index + 1 */}
-                        <input
-                            type="text"
-                            value={choice}
-                            onChange={(e) => {
-                                const newChoices = [...choices];
-                                newChoices[index] = e.target.value;
-                                setChoices(newChoices);
-                            }}
-                            required
-                        />
-                    </label>
+                    <div className='flex' key={index}>
+                        <label>
+                            Choice {index + 1}:
+                            <input
+                                type="text"
+                                value={choice}
+                                onChange={(e) => {
+                                    const newChoices = [...choices];
+                                    newChoices[index] = e.target.value;
+                                    setChoices(newChoices);
+                                }}
+                                required
+                            />
+                        </label>
                     </div>
-                    </>
                 ))}
                 <label>
                     Correct Answer:
                     <select value={correctAnswer} onChange={(e) => setCorrectAnswer(parseInt(e.target.value))}>
                         {choices.map((choice, index) => (
-                            <option key={index} value={index + 1}>{`Choice ${index + 1}`}</option> 
+                            <option key={index} value={index + 1}>{`Choice ${index + 1}`}</option>
                         ))}
                     </select>
                 </label>

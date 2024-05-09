@@ -209,18 +209,7 @@ function Tutorhome() {
       <Link onClick={() => handleViewQuestions(quiz)}>View the questions</Link>
       <button onClick={() => handleDeleteQuiz(quiz)} className="p-2 bg-red-700/70 my-2">Delete</button>
       {/* Display questions if quiz.questions is not undefined */}
-      {quiz.questions && quiz.questions.map((question, qIndex) => (
-        <div key={qIndex}>
-          <h4>{question.question}</h4>
-          <ul>
-            {question.choices.map((choice, cIndex) => (
-              <li key={cIndex}>{choice}</li>
-            ))}
-          </ul>
-          <p>Correct Answer: {question.correctAnswer}</p>
-          <p>Timer: {question.timer} seconds</p>
-        </div>
-      ))}
+      
     </div>
   </details>
 ))}
