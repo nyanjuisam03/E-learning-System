@@ -8,6 +8,7 @@ import { doc, getDoc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firest
 import { db,storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
+
 function Tutorhome() {
   const { courseId } = useParams(); // Get the courseId parameter from the URL
   const [courseName, setCourseName] = useState('');
@@ -198,16 +199,32 @@ function Tutorhome() {
 
 </ul>
 
-<ul>{quizzes.map((quiz, index) => (
-            <details key={index} className="collapse bg-base-200 my-2">
-              <summary className="collapse-title text-xl font-medium">{quiz}</summary>
-              <div className="collapse-content flex flex-col">
-                {/* Quiz content */}
-                <Link to={`/quiz/${quiz.id}`}>Create A quiz</Link>
-                <button onClick={() => handleDeleteQuiz(quiz)} className="p-2 bg-red-700/70 my-2">Delete</button>
-              </div>
-            </details>
-          ))}
+<ul>
+{quizzes.map((quiz, index) => (
+  <details key={index} className="collapse bg-base-200 my-2">
+    <summary className="collapse-title text-xl font-medium">{quiz}</summary>
+    <div className="collapse-content flex flex-col">
+      {/* Quiz content */}
+      <Link to={`/quiz/${quiz.id}`}>Create A quiz</Link>
+      <Link onClick={() => handleViewQuestions(quiz)}>View the questions</Link>
+      <button onClick={() => handleDeleteQuiz(quiz)} className="p-2 bg-red-700/70 my-2">Delete</button>
+      {/* Display questions if quiz.questions is not undefined */}
+      {quiz.questions && quiz.questions.map((question, qIndex) => (
+        <div key={qIndex}>
+          <h4>{question.question}</h4>
+          <ul>
+            {question.choices.map((choice, cIndex) => (
+              <li key={cIndex}>{choice}</li>
+            ))}
+          </ul>
+          <p>Correct Answer: {question.correctAnswer}</p>
+          <p>Timer: {question.timer} seconds</p>
+        </div>
+      ))}
+    </div>
+  </details>
+))}
+
           </ul>
 
         </div>
